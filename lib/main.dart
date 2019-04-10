@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:moviedb_flutter/ui/screen/favorite.dart';
-import 'package:moviedb_flutter/ui/screen/now_playing.dart';
+import 'package:moviedb_flutter/ui/screen/favorite/favorite.dart';
+import 'package:moviedb_flutter/ui/screen/nowplaying/now_playing_widget.dart';
 
 void main() => runApp(MyApp());
 
@@ -22,7 +22,7 @@ class MainState extends State<Main> {
   int _currentTab = 0;
   final List<Widget> _tabs = [NowPlaying(), Favorite()];
   final List<Widget> _titleTabs = [
-    NowPlaying().getName(),
+    Text("Now Playing"),
     Favorite().getName()
   ];
 
@@ -39,7 +39,7 @@ class MainState extends State<Main> {
           items: [
             BottomNavigationBarItem(
                 icon: Icon(Icons.home),
-                title: NowPlaying().getName()),
+                title: Text("Now Playing")),
             BottomNavigationBarItem(
                 icon: Icon(Icons.favorite),
                 title: Favorite().getName())
