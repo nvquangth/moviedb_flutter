@@ -35,50 +35,70 @@ class NowPlayingState extends State<NowPlaying> {
 
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     return Container(
       child: Center(
         child: isLoading
             ? CircularProgressIndicator()
             : ListView.builder(
-            itemCount: movies.length,
-            itemBuilder: (context, i) {
-          return _buildRow(movies[i]);
-        }),
+                physics: BouncingScrollPhysics(),
+                itemCount: movies.length,
+                itemBuilder: (context, i) {
+                  return _buildRow(movies[i], context);
+                }),
       ),
     );
   }
 
-  Widget _buildRow(Movie movie) {
+  Widget _buildRow(Movie movie, BuildContext context) {
     var url = "http://image.tmdb.org/t/p/w185" + movie.posterPath;
 
-    return Card(
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Image.network(url),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Padding(
-                  padding: EdgeInsets.all(10.0),
-                  child: Text(movie.title, style: TextStyle(
-                      fontSize: 20, fontWeight: FontWeight.bold),)
-              ),
-              Padding(
-                  padding: EdgeInsets.all(10.0),
-                  child: Row(
-                    children: <Widget>[
-                      Text(movie.vote.toString(),
-                        style: TextStyle(color: Colors.black),),
-                      Icon(Icons.star, color: Colors.yellow)
-                    ],
-                  )
-              )
+    _gotoDetail() {
+//      Navigator.of(context)
+//          .push(MaterialPageRoute(builder: (context) => Detail()));
 
-            ],
-          ),
-        ],
+      Navigator.of(context).pushNamed('/detail', arguments: movie);
+    }
+
+    _handleFavorite() {}
+
+    return GestureDetector(
+      onTap: _gotoDetail,
+      child: Card(
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Image.network(url),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Padding(
+                      padding: EdgeInsets.all(10.0),
+                      child: Text(
+                        movie.title,
+                        style: TextStyle(
+                            fontSize: 20, fontWeight: FontWeight.bold),
+                      )),
+                  Padding(
+                      padding: EdgeInsets.all(10.0),
+                      child: Row(
+                        children: <Widget>[
+                          Text(
+                            movie.vote.toString(),
+                            style: TextStyle(color: Colors.black),
+                          ),
+                          Icon(Icons.star, color: Colors.yellow)
+                        ],
+                      ))
+                ],
+              ),
+            ),
+            IconButton(
+              icon: Icon(Icons.favorite_border),
+              onPressed: _handleFavorite,
+            )
+          ],
+        ),
       ),
     );
   }

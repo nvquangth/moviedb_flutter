@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:moviedb_flutter/ui/screen/favorite/favorite.dart';
 import 'package:moviedb_flutter/ui/screen/nowplaying/now_playing_widget.dart';
+import 'package:moviedb_flutter/ui/screen/detail/detail_widget.dart';
 
 void main() => runApp(MyApp());
 
@@ -14,6 +15,9 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       home: Main(),
+      routes: <String, WidgetBuilder> {
+        '/detail': (BuildContext context) => Detail()
+      },
     );
   }
 }
@@ -31,6 +35,7 @@ class MainState extends State<Main> {
     return Scaffold(
       appBar: AppBar(
         title: _titleTabs[_currentTab],
+        centerTitle: true,
       ),
       body: _tabs[_currentTab],
       bottomNavigationBar: BottomNavigationBar(
