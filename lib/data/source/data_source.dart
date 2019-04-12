@@ -1,12 +1,8 @@
-import 'package:moviedb_flutter/data/model/movie.dart';
-import 'package:moviedb_flutter/data/model/movie_respone.dart';
-
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 import 'package:moviedb_flutter/data/model/movie.dart';
 import 'package:moviedb_flutter/data/model/movie_respone.dart';
-import 'package:moviedb_flutter/data/source/data_source.dart';
 
 abstract class MovieRemote {
   Future<MovieResponse> getNowPlaying(int page);
@@ -14,9 +10,7 @@ abstract class MovieRemote {
   Future<Movie> getMovie(int id);
 }
 
-abstract class MovieLocal {
-
-}
+abstract class MovieLocal {}
 
 class MovieRemoteDataSource implements MovieRemote {
   static const String API_KEY = "3956f50a726a2f785334c24759b97dc6";
@@ -26,11 +20,19 @@ class MovieRemoteDataSource implements MovieRemote {
   static const String PAGE_PARAM = "page";
   static const String API_KEY_PARAM = "api_key";
 
-  const MovieRemoteDataSource();
+  static MovieRemoteDataSource _instance;
+
+  factory MovieRemoteDataSource() {
+    if (_instance == null) {
+      _instance = MovieRemoteDataSource._internal();
+    }
+    return _instance;
+  }
+
+  MovieRemoteDataSource._internal();
 
   @override
   Future<Movie> getMovie(int id) {
-    // TODO: implement getMovie
     return null;
   }
 
@@ -39,8 +41,6 @@ class MovieRemoteDataSource implements MovieRemote {
     var url = Uri.https(BASE_URL, NOW_PLAYING_PATH,
         {API_KEY_PARAM: API_KEY, PAGE_PARAM: page.toString()});
 
-    print(url);
-
     final response = await http.get(url);
     if (response.statusCode == 200) {
       return MovieResponse.fromJson(json.decode(response.body));
@@ -48,5 +48,4 @@ class MovieRemoteDataSource implements MovieRemote {
       throw Exception('Load data movie failed');
     }
   }
-
 }
