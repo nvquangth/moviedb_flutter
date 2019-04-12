@@ -3,15 +3,24 @@ import 'package:moviedb_flutter/data/model/movie_respone.dart';
 import 'package:moviedb_flutter/data/source/data_source.dart';
 
 abstract class MovieRepository {
-  getNowPlaying(int page, onSuccess(MovieResponse movieResponse), onFail(Exception e));
+  getNowPlaying(
+      int page, onSuccess(MovieResponse movieResponse), onFail(Exception e));
 
   getMovie(int id, onSuccess(Movie movie), onFail(Exception e));
 }
 
 class MovieRepositoryImpl implements MovieRepository {
   final MovieRemote remote;
+  static MovieRepositoryImpl _instance;
 
-  const MovieRepositoryImpl({this.remote});
+  factory MovieRepositoryImpl(MovieRemoteDataSource remote) {
+    if (_instance == null) {
+      _instance = MovieRepositoryImpl._internal(remote: remote);
+    }
+    return _instance;
+  }
+
+  MovieRepositoryImpl._internal({this.remote});
 
   @override
   getMovie(

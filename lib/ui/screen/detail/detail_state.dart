@@ -2,24 +2,43 @@ import 'package:flutter/material.dart';
 import 'package:moviedb_flutter/data/model/movie.dart';
 import 'package:moviedb_flutter/ui/screen/detail/detail_widget.dart';
 import 'package:toast/toast.dart';
+import 'package:moviedb_flutter/di/app_injection.dart';
 
 class DetailState extends State<Detail> {
   bool isFavorite = false;
   BuildContext scaffoldContext;
+  Movie _movie;
+  final _injection = AppInjection();
+
+  @override
+  void initState() {
+    super.initState();
+
+  }
 
   @override
   Widget build(BuildContext context) {
-    final Movie movie = ModalRoute.of(context).settings.arguments;
+    _movie = ModalRoute.of(context).settings.arguments;
+
+    _injection.provideRepository().getMovie(_movie.id, onSuccess, onFail);
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(movie.title),
+        title: Text(_movie.title),
       ),
       body: Builder(builder: (context) {
         scaffoldContext = context;
-        return _buildDetail(movie);
+        return _buildDetail(_movie);
       }),
     );
+  }
+
+  void onSuccess(Movie movie) {
+    _movie = movie;
+  }
+
+  void onFail(Exception e) {
+
   }
 
   Widget _buildDetail(Movie movie) {
@@ -34,7 +53,6 @@ class DetailState extends State<Detail> {
 
   Widget _buildImage(String path) {
     var url = "http://image.tmdb.org/t/p/w780" + path;
-    print(url);
     return Stack(
       children: <Widget>[
         Positioned(

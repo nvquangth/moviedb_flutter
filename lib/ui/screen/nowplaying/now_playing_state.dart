@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:moviedb_flutter/data/model/movie.dart';
 import 'package:moviedb_flutter/data/model/movie_respone.dart';
-import 'package:moviedb_flutter/data/repository/movie_repository.dart';
-import 'package:moviedb_flutter/data/source/data_source.dart';
+import 'package:moviedb_flutter/di/app_injection.dart';
 import 'package:moviedb_flutter/ui/screen/nowplaying/now_playing_widget.dart';
+import 'package:toast/toast.dart';
 
 class NowPlayingState extends State<NowPlaying> {
-  static const remote = MovieRemoteDataSource();
-  var repository = MovieRepositoryImpl(remote: remote);
+  final _injection = AppInjection();
   var isLoading = true;
   List<Movie> movies;
 
@@ -19,7 +18,7 @@ class NowPlayingState extends State<NowPlaying> {
       isLoading = true;
     });
 
-    repository.getNowPlaying(1, onSuccess, onFail);
+    _injection.provideRepository().getNowPlaying(1, onSuccess, onFail);
   }
 
   void onSuccess(MovieResponse movieResponse) {
@@ -30,7 +29,10 @@ class NowPlayingState extends State<NowPlaying> {
   }
 
   void onFail(Exception e) {
-    print(e);
+    setState(() {
+      isLoading = false;
+    });
+    Toast.show(e.toString(), context);
   }
 
   @override
