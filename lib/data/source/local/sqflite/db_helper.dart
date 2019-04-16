@@ -14,7 +14,7 @@ class DbHelper {
   DbHelper._internal();
 
   final String createDatabase =
-      "CREATE TABLE movie (id INTERGER PRIMARY KEY, title TEXT, vote REAL, posterPath TEXT, backdropPath TEXT, overview TEXT, relaseDate TEXT)";
+      "CREATE TABLE movie (id INTERGER PRIMARY KEY, title TEXT, vote REAL, posterPath TEXT, backdropPath TEXT, overview TEXT, releaseDate TEXT)";
 
   Database database;
 
