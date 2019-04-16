@@ -3,6 +3,7 @@ import 'package:moviedb_flutter/data/model/cast.dart';
 import 'package:moviedb_flutter/data/model/cast_response.dart';
 import 'package:moviedb_flutter/data/model/company.dart';
 import 'package:moviedb_flutter/data/model/movie.dart';
+import 'package:moviedb_flutter/data/repository/movie_repository.dart';
 import 'package:moviedb_flutter/di/app_injection.dart';
 import 'package:moviedb_flutter/ui/screen/detail/detail_widget.dart';
 import 'package:toast/toast.dart';
@@ -12,12 +13,25 @@ class DetailState extends State<Detail> {
   BuildContext scaffoldContext;
   Movie _movie;
   final _injection = AppInjection();
+  MovieRepository _repository;
 
   @override
   void initState() {
     super.initState();
     _movie = widget.movie;
-    _injection.provideRepository().getMovie(true, _movie.id, onSuccess, onFail);
+    _repository = _injection.provideRepository();
+    _repository.getMovie(true, _movie.id, onSuccess, onFail);
+    _repository.getMovie(false, _movie.id, (movie) {
+      if (movie == null) {
+        setState(() {
+          isFavorite = false;
+        });
+      } else {
+        setState(() {
+          isFavorite = true;
+        });
+      }
+    }, (Exception e) {});
   }
 
   @override
@@ -44,6 +58,7 @@ class DetailState extends State<Detail> {
 
   Widget _buildDetail(Movie movie) {
     return ListView(
+      physics: BouncingScrollPhysics(),
       children: <Widget>[
         _buildImage(movie.backdropPath),
         _buildTitle(movie.title),
@@ -53,9 +68,7 @@ class DetailState extends State<Detail> {
             : Center(
                 child: CircularProgressIndicator(),
               ),
-        movie.companies != null
-            ? _buildCompany(movie.companies)
-            : Container()
+        movie.companies != null ? _buildCompany(movie.companies) : Container()
       ],
     );
   }
@@ -223,17 +236,28 @@ class DetailState extends State<Detail> {
   }
 
   _handleFavorite() {
-    setState(() {
-      isFavorite = !isFavorite;
-    });
-
-    String msg = "";
     if (isFavorite) {
-      msg = "Add to Favorite!";
+      _repository.deleteMovie(_movie, () {
+        setState(() {
+          isFavorite = false;
+        });
+        _toast("Remove from Favorite!");
+      }, (Exception e) {
+        _toast(e.toString());
+      });
     } else {
-      msg = "Remove from Favorite!";
+      _repository.insertMovie(_movie, () {
+        setState(() {
+          isFavorite = true;
+        });
+        _toast("Add to Favorite!");
+      }, (Exception e) {
+        _toast(e.toString());
+      });
     }
+  }
 
+  void _toast(String msg) {
     Toast.show(msg, context);
   }
 }

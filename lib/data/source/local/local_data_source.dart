@@ -3,11 +3,11 @@ import 'package:moviedb_flutter/data/source/local/sqflite/db_helper.dart';
 import 'package:sqflite/sqflite.dart';
 
 abstract class MovieLocal {
-  Future<bool> insertMovie(Movie movie);
+  Future<int> insertMovie(Movie movie);
 
-  Future<bool> updateMovie(Movie movie);
+  Future<int> updateMovie(Movie movie);
 
-  Future<bool> deleteMovie(Movie movie);
+  Future<int> deleteMovie(Movie movie);
 
   Future<Movie> getMovie(int movieId);
 
@@ -31,12 +31,12 @@ class MovieLocalDataSource implements MovieLocal {
   MovieLocalDataSource._internal({this.dbHelper});
 
   @override
-  Future<bool> deleteMovie(Movie movie) async {
+  Future<int> deleteMovie(Movie movie) async {
     Database db = await dbHelper.open();
-    int result =
-        await db.rawDelete('DELETE FROM movie WHERE id = ?', [movie.id]);
-    db.close();
-    return result == 1 ? true : false;
+    int result = await db.delete('movie', where: 'id = ?', whereArgs: [movie.id]);
+//    int result = await db.rawDelete('DELETE FROM movie WHERE id = ?', [movie.id]);
+//    await dbHelper.close();
+    return result;
   }
 
   @override
@@ -44,7 +44,7 @@ class MovieLocalDataSource implements MovieLocal {
     Database db = await dbHelper.open();
     List<Map<String, dynamic>> results =
         await db.rawQuery('SELECT * FROM movie WHERE id = ?', [movieId]);
-    db.close();
+//    await dbHelper.close();
     if (results == null || results.length == 0) {
       return null;
     }
@@ -57,7 +57,7 @@ class MovieLocalDataSource implements MovieLocal {
     Database db = await dbHelper.open();
     List<Map<String, dynamic>> results =
         await db.rawQuery('SELECT * FROM movie');
-    db.close();
+//    await dbHelper.close();
     List<Movie> movies = [];
     for (Map<String, dynamic> result in results) {
       movies.add(_getMovieFromRaw(result));
@@ -66,7 +66,7 @@ class MovieLocalDataSource implements MovieLocal {
   }
 
   @override
-  Future<bool> insertMovie(Movie movie) async {
+  Future<int> insertMovie(Movie movie) async {
     Database db = await dbHelper.open();
     var map = Map<String, dynamic>();
     map['id'] = movie.id;
@@ -79,7 +79,8 @@ class MovieLocalDataSource implements MovieLocal {
 
     int result = await db.insert('movie', map,
         conflictAlgorithm: ConflictAlgorithm.replace);
-    return result == 1 ? true : false;
+//    await dbHelper.close();
+    return result;
   }
 
   @override
@@ -87,7 +88,7 @@ class MovieLocalDataSource implements MovieLocal {
     Database db = await dbHelper.open();
     List<Map<String, dynamic>> results =
         await db.rawQuery('SELECT * FROM movie WHERE title LIKE ?', [q]);
-    db.close();
+//    await dbHelper.close();
     List<Movie> movies = [];
     for (Map<String, dynamic> result in results) {
       movies.add(_getMovieFromRaw(result));
@@ -96,12 +97,21 @@ class MovieLocalDataSource implements MovieLocal {
   }
 
   @override
-  Future<bool> updateMovie(Movie movie) async {
+  Future<int> updateMovie(Movie movie) async {
     Database db = await dbHelper.open();
-    int result =
-        await db.rawDelete('DELETE FROM movie WHERE id = ?', [movie.id]);
-    db.close();
-    return result == 1 ? true : false;
+    var map = Map<String, dynamic>();
+    map['id'] = movie.id;
+    map['title'] = movie.title;
+    map['vote'] = movie.vote;
+    map['posterPath'] = movie.posterPath;
+    map['backdropPath'] = movie.backdropPath;
+    map['overview'] = movie.overview;
+    map['releaseDate'] = movie.releaseDate;
+
+    int result = await db.update('movie', map,
+        conflictAlgorithm: ConflictAlgorithm.replace);
+//    await dbHelper.close();
+    return result;
   }
 
   Movie _getMovieFromRaw(Map<String, dynamic> raw) {

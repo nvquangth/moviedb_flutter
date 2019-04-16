@@ -68,11 +68,7 @@ class MovieRepositoryImpl implements MovieRepository {
   deleteMovie(Movie movie, Function() onSuccess, Function(Exception e) onFail) {
     try {
       local.deleteMovie(movie).then((result) {
-        if (result) {
-          onSuccess();
-        } else {
-          onFail(Exception("Delete failed!"));
-        }
+        onSuccess();
       });
     } catch (e) {
       onFail(e);
@@ -95,13 +91,9 @@ class MovieRepositoryImpl implements MovieRepository {
   insertMovie(Movie movie, Function() onSuccess, Function(Exception e) onFail) {
     try {
       local.insertMovie(movie).then((result) {
-        if (result) {
-          onSuccess();
-        } else {
-          onFail(Exception("Insert failed!"));
-        }
+        onSuccess();
       });
-    } catch (e) {
+    } on Exception catch (e) {
       onFail(e);
     }
   }
@@ -110,11 +102,7 @@ class MovieRepositoryImpl implements MovieRepository {
   updateMovie(Movie movie, Function() onSuccess, Function(Exception e) onFail) {
     try {
       local.updateMovie(movie).then((result) {
-        if (result) {
-          onSuccess();
-        } else {
-          onFail(Exception("Update failed!"));
-        }
+        onSuccess();
       });
     } catch (e) {
       onFail(e);
