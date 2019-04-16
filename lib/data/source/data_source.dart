@@ -16,9 +16,10 @@ class MovieRemoteDataSource implements MovieRemote {
   static const String API_KEY = "3956f50a726a2f785334c24759b97dc6";
   static const String BASE_URL = "api.themoviedb.org";
   static const String NOW_PLAYING_PATH = "/3/movie/now_playing";
-  static const String MOVIE_PATH = "movie";
+  static const String MOVIE_PATH = "/3/movie/";
   static const String PAGE_PARAM = "page";
   static const String API_KEY_PARAM = "api_key";
+  static const String OPTION_PARAM = "append_to_response";
 
   static MovieRemoteDataSource _instance;
 
@@ -32,8 +33,14 @@ class MovieRemoteDataSource implements MovieRemote {
   MovieRemoteDataSource._internal();
 
   @override
-  Future<Movie> getMovie(int id) {
-    return null;
+  Future<Movie> getMovie(int id) async {
+    var url = Uri.https(BASE_URL, MOVIE_PATH + '$id', {API_KEY_PARAM: API_KEY, OPTION_PARAM: 'videos,credits'});
+    final response = await http.get(url);
+    if (response.statusCode == 200) {
+      return Movie.fromJson(json.decode(response.body));
+    } else {
+      throw Exception('Load data movie failed');
+    }
   }
 
   @override
@@ -45,7 +52,7 @@ class MovieRemoteDataSource implements MovieRemote {
     if (response.statusCode == 200) {
       return MovieResponse.fromJson(json.decode(response.body));
     } else {
-      throw Exception('Load data movie failed');
+      throw Exception('Load data movies failed');
     }
   }
 }
