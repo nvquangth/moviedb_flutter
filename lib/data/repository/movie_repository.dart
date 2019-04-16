@@ -1,6 +1,6 @@
 import 'package:moviedb_flutter/data/model/movie.dart';
 import 'package:moviedb_flutter/data/model/movie_respone.dart';
-import 'package:moviedb_flutter/data/source/data_source.dart';
+import 'package:moviedb_flutter/data/source/remote/remote_data_source.dart';
 import 'package:moviedb_flutter/data/source/local/local_data_source.dart';
 
 abstract class MovieRepository {
