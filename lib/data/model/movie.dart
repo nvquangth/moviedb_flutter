@@ -16,8 +16,7 @@ class Movie {
   final CastResponse castResponse;
   final VideoResponse videoResponse;
 
-  // private constructor
-  Movie._(
+  Movie(
       {this.id,
       this.title,
       this.vote,
@@ -33,7 +32,7 @@ class Movie {
   factory Movie.fromJson(Map<String, dynamic> json) {
     if (json == null) return null;
 
-    return Movie._(
+    return Movie(
         id: json['id'],
         title: json['title'],
         vote: json['vote_average'],
