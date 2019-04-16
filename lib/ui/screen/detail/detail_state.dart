@@ -17,7 +17,7 @@ class DetailState extends State<Detail> {
   void initState() {
     super.initState();
     _movie = widget.movie;
-    _injection.provideRepository().getMovie(_movie.id, onSuccess, onFail);
+    _injection.provideRepository().getMovie(true, _movie.id, onSuccess, onFail);
   }
 
   @override

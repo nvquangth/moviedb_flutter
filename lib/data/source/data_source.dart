@@ -10,8 +10,7 @@ abstract class MovieRemote {
   Future<Movie> getMovie(int id);
 }
 
-abstract class MovieLocal {}
-
+/// Movie Remote Data Source
 class MovieRemoteDataSource implements MovieRemote {
   static const String API_KEY = "3956f50a726a2f785334c24759b97dc6";
   static const String BASE_URL = "api.themoviedb.org";
