@@ -24,7 +24,15 @@ class MovieRepositoryImpl implements MovieRepository {
 
   @override
   getMovie(
-      int id, Function(Movie movie) onSuccess, Function(Exception e) onFail) {}
+      int id, Function(Movie movie) onSuccess, Function(Exception e) onFail) {
+    try {
+      remote.getMovie(id).then((response) {
+        onSuccess(response);
+      });
+    } catch (e) {
+      onFail(e);
+    }
+  }
 
   @override
   getNowPlaying(int page, Function(MovieResponse movieResponse) onSuccess,

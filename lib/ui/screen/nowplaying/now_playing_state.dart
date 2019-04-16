@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:moviedb_flutter/data/model/movie.dart';
 import 'package:moviedb_flutter/data/model/movie_respone.dart';
 import 'package:moviedb_flutter/di/app_injection.dart';
+import 'package:moviedb_flutter/ui/screen/detail/detail_widget.dart';
 import 'package:moviedb_flutter/ui/screen/nowplaying/now_playing_widget.dart';
 import 'package:toast/toast.dart';
 
@@ -55,10 +56,10 @@ class NowPlayingState extends State<NowPlaying> {
     var url = "http://image.tmdb.org/t/p/w185" + movie.posterPath;
 
     _gotoDetail() {
-//      Navigator.of(context)
-//          .push(MaterialPageRoute(builder: (context) => Detail()));
+      Navigator.of(context)
+          .push(MaterialPageRoute(builder: (context) => Detail(movie: movie,)));
 
-      Navigator.of(context).pushNamed('/detail', arguments: movie);
+//      Navigator.of(context).pushNamed('/detail', arguments: movie);
     }
 
     _handleFavorite() {}

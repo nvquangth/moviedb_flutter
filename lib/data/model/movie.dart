@@ -49,7 +49,7 @@ class Movie {
                 .map((obj) => Company.fromJson(obj)))
             : null,
         castResponse:
-            json['casts'] != null ? CastResponse.fromJson(json['casts']) : null,
+            json['credits'] != null ? CastResponse.fromJson(json['credits']) : null,
         videoResponse: json['videos'] != null
             ? VideoResponse.fromJson(json['videos'])
             : null);
