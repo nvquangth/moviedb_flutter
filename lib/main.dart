@@ -11,9 +11,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
+      theme: ThemeData.dark(),
       home: Main(),
       routes: <String, WidgetBuilder> {
         '/detail': (BuildContext context) => Detail()
@@ -43,10 +41,10 @@ class MainState extends State<Main> {
           onTap: onItemSelected,
           items: [
             BottomNavigationBarItem(
-                icon: Icon(Icons.home),
+                icon: Icon(Icons.movie),
                 title: Text("Now Playing")),
             BottomNavigationBarItem(
-                icon: Icon(Icons.favorite),
+                icon: Icon(Icons.video_library),
                 title: Text('Favorite'))
           ]),
     );
