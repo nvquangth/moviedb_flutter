@@ -1,11 +1,12 @@
 import 'package:moviedb_flutter/data/model/movie.dart';
 import 'package:moviedb_flutter/data/model/movie_respone.dart';
-import 'package:moviedb_flutter/data/source/remote/remote_data_source.dart';
 import 'package:moviedb_flutter/data/source/local/local_data_source.dart';
+import 'package:moviedb_flutter/data/source/remote/remote_data_source.dart';
 
 abstract class MovieRepository {
-
   Future<MovieResponse> getNowPlaying(int page);
+
+  Future<Movie> getMovie2(bool fromServer, int id);
 
   getMovie(
       bool fromServer, int id, onSuccess(Movie movie), onFail(Exception e));
@@ -99,4 +100,8 @@ class MovieRepositoryImpl implements MovieRepository {
 
   @override
   Future<MovieResponse> getNowPlaying(int page) => remote.getNowPlaying(page);
+
+  @override
+  Future<Movie> getMovie2(bool fromServer, int id) =>
+      fromServer ? remote.getMovie(id) : local.getMovie(id);
 }
