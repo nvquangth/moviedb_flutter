@@ -7,22 +7,31 @@ import 'package:moviedb_flutter/data/repository/movie_repository.dart';
 import 'package:moviedb_flutter/di/app_injection.dart';
 import 'package:moviedb_flutter/ui/screen/detail/detail_widget.dart';
 import 'package:toast/toast.dart';
-import 'package:moviedb_flutter/ui/screen/detail/detail_bloc.dart';
 
 class DetailState extends State<Detail> {
   bool isFavorite = false;
   BuildContext scaffoldContext;
   Movie _movie;
+  final _injection = AppInjection();
   MovieRepository _repository;
-  final DetailBloc bloc = DetailBloc();
 
   @override
   void initState() {
     super.initState();
     _movie = widget.movie;
-
-    bloc.getMovie(true, _movie.id);
-    bloc.checkFavorite(_movie.id);
+    _repository = _injection.provideRepository();
+    _repository.getMovie(true, _movie.id, onSuccess, onFail);
+    _repository.getMovie(false, _movie.id, (movie) {
+      if (movie == null) {
+        setState(() {
+          isFavorite = false;
+        });
+      } else {
+        setState(() {
+          isFavorite = true;
+        });
+      }
+    }, (Exception e) {});
   }
 
   @override
@@ -54,26 +63,12 @@ class DetailState extends State<Detail> {
         _buildImage(movie.backdropPath),
         _buildTitle(movie.title),
         _buildOverview(movie.overview),
-        StreamBuilder(
-          stream: bloc.movieStream,
-          builder: (context, AsyncSnapshot<Movie> snapshot) {
-            if (snapshot.hasData) {
-              return _buildCast(snapshot.data.castResponse);
-            }
-            return Center(
-              child: CircularProgressIndicator(),
-            );
-          },
-        ),
-        StreamBuilder(
-          stream: bloc.movieStream,
-          builder: (context, AsyncSnapshot<Movie> snapshot) {
-            if (snapshot.hasData) {
-              return _buildCompany(snapshot.data.companies);
-            }
-            return Container();
-          },
-        )
+        movie.castResponse != null
+            ? _buildCast(movie.castResponse)
+            : Center(
+                child: CircularProgressIndicator(),
+              ),
+        movie.companies != null ? _buildCompany(movie.companies) : Container()
       ],
     );
   }
@@ -90,16 +85,11 @@ class DetailState extends State<Detail> {
           bottom: 10,
           child: RawMaterialButton(
             onPressed: _handleFavorite,
-            child: StreamBuilder(
-                stream: bloc.favoriteStream,
-                builder: (context, AsyncSnapshot<bool> snapshot) {
-              if (snapshot.hasData) {
-                return Icon(
-                  snapshot.data ? Icons.favorite : Icons.favorite_border, color: Colors.blue, size: 35.0,
-                );
-              }
-              return Container();
-            }),
+            child: Icon(
+              isFavorite ? Icons.favorite : Icons.favorite_border,
+              color: Colors.blue,
+              size: 35.0,
+            ),
             shape: CircleBorder(),
             fillColor: Colors.black.withOpacity(0.5),
             padding: const EdgeInsets.all(10.0),
