@@ -4,8 +4,8 @@ import 'package:moviedb_flutter/data/source/remote/remote_data_source.dart';
 import 'package:moviedb_flutter/data/source/local/local_data_source.dart';
 
 abstract class MovieRepository {
-  getNowPlaying(
-      int page, onSuccess(MovieResponse movieResponse), onFail(Exception e));
+
+  Future<MovieResponse> getNowPlaying(int page);
 
   getMovie(
       bool fromServer, int id, onSuccess(Movie movie), onFail(Exception e));
@@ -47,18 +47,6 @@ class MovieRepositoryImpl implements MovieRepository {
           onSuccess(results);
         });
       }
-    } catch (e) {
-      onFail(e);
-    }
-  }
-
-  @override
-  getNowPlaying(int page, Function(MovieResponse movieResponse) onSuccess,
-      Function(Exception e) onFail) {
-    try {
-      remote.getNowPlaying(page).then((response) {
-        onSuccess(response);
-      });
     } catch (e) {
       onFail(e);
     }
@@ -108,4 +96,7 @@ class MovieRepositoryImpl implements MovieRepository {
       onFail(e);
     }
   }
+
+  @override
+  Future<MovieResponse> getNowPlaying(int page) => remote.getNowPlaying(page);
 }

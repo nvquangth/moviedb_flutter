@@ -15,3 +15,5 @@ class AppInjection {
   MovieLocalDataSource provideMovieLocalDataSource() =>
       MovieLocalDataSource(provideDbHelper());
 }
+
+final injection = AppInjection();
