@@ -3,17 +3,13 @@ import 'package:moviedb_flutter/data/model/cast.dart';
 import 'package:moviedb_flutter/data/model/cast_response.dart';
 import 'package:moviedb_flutter/data/model/company.dart';
 import 'package:moviedb_flutter/data/model/movie.dart';
-import 'package:moviedb_flutter/data/repository/movie_repository.dart';
-import 'package:moviedb_flutter/di/app_injection.dart';
+import 'package:moviedb_flutter/ui/screen/detail/detail_bloc.dart';
 import 'package:moviedb_flutter/ui/screen/detail/detail_widget.dart';
 import 'package:toast/toast.dart';
-import 'package:moviedb_flutter/ui/screen/detail/detail_bloc.dart';
 
 class DetailState extends State<Detail> {
-  bool isFavorite = false;
   BuildContext scaffoldContext;
   Movie _movie;
-  MovieRepository _repository;
   final DetailBloc bloc = DetailBloc();
 
   @override
@@ -21,8 +17,14 @@ class DetailState extends State<Detail> {
     super.initState();
     _movie = widget.movie;
 
-    bloc.getMovie(true, _movie.id);
-    bloc.checkFavorite(_movie.id);
+    bloc.getMovie(true, _movie);
+    bloc.checkFavorite();
+  }
+
+  @override
+  void dispose() {
+    bloc.dispose();
+    super.dispose();
   }
 
   @override
@@ -89,17 +91,19 @@ class DetailState extends State<Detail> {
           right: -10,
           bottom: 10,
           child: RawMaterialButton(
-            onPressed: _handleFavorite,
+            onPressed: bloc.handleFavorite,
             child: StreamBuilder(
                 stream: bloc.favoriteStream,
                 builder: (context, AsyncSnapshot<bool> snapshot) {
-              if (snapshot.hasData) {
-                return Icon(
-                  snapshot.data ? Icons.favorite : Icons.favorite_border, color: Colors.blue, size: 35.0,
-                );
-              }
-              return Container();
-            }),
+                  if (snapshot.hasData) {
+                    return Icon(
+                      snapshot.data ? Icons.favorite : Icons.favorite_border,
+                      color: Colors.blue,
+                      size: 35.0,
+                    );
+                  }
+                  return Container();
+                }),
             shape: CircleBorder(),
             fillColor: Colors.black.withOpacity(0.5),
             padding: const EdgeInsets.all(10.0),
@@ -243,28 +247,6 @@ class DetailState extends State<Detail> {
         Text(company.name)
       ],
     );
-  }
-
-  _handleFavorite() {
-    if (isFavorite) {
-      _repository.deleteMovie(_movie, () {
-        setState(() {
-          isFavorite = false;
-        });
-        _toast("Remove from Favorite!");
-      }, (Exception e) {
-        _toast(e.toString());
-      });
-    } else {
-      _repository.insertMovie(_movie, () {
-        setState(() {
-          isFavorite = true;
-        });
-        _toast("Add to Favorite!");
-      }, (Exception e) {
-        _toast(e.toString());
-      });
-    }
   }
 
   void _toast(String msg) {

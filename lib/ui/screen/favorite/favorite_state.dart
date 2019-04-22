@@ -1,45 +1,44 @@
 import 'package:flutter/material.dart';
 import 'package:moviedb_flutter/data/model/movie.dart';
-import 'package:moviedb_flutter/data/repository/movie_repository.dart';
-import 'package:moviedb_flutter/di/app_injection.dart';
 import 'package:moviedb_flutter/ui/screen/detail/detail_widget.dart';
+import 'package:moviedb_flutter/ui/screen/favorite/favorite_bloc.dart';
 import 'package:moviedb_flutter/ui/screen/favorite/favorite_widget.dart';
-import 'package:toast/toast.dart';
 
 class FavoriteState extends State<Favorite> {
-  final _injection = AppInjection();
-  MovieRepository _repository;
   List<Movie> _movies = [];
-  bool _isLoading = false;
+  final FavoriteBloc bloc = FavoriteBloc();
 
   @override
   void initState() {
     super.initState();
-    _repository = _injection.provideRepository();
-    _repository.getMovies((movies) {
-      setState(() {
-        _isLoading = false;
-        _movies = movies;
-      });
-    }, (e) {
-      setState(() {
-        _isLoading = false;
-        Toast.show(e.toString(), context);
-      });
-    });
+    bloc.getMovies();
+  }
+
+  @override
+  void dispose() {
+    bloc.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Container(
       child: Center(
-        child: _isLoading
-            ? CircularProgressIndicator()
-            : ListView.builder(
-            physics: BouncingScrollPhysics(),
-            itemCount: _movies.length,
-            itemBuilder: (context, i) {
-              return _buildRow(_movies[i], context);
+        child: StreamBuilder(
+            stream: bloc.movies,
+            builder: (context, AsyncSnapshot<List<Movie>> snapshot) {
+              if (snapshot.hasData) {
+                _movies = snapshot.data;
+                return ListView.builder(
+                    physics: BouncingScrollPhysics(),
+                    itemCount: _movies.length,
+                    itemBuilder: (context, i) {
+                      return _buildRow(_movies[i], context);
+                    });
+              } else if (snapshot.hasError) {
+                return Text(snapshot.error.toString());
+              }
+              return CircularProgressIndicator();
             }),
       ),
     );
