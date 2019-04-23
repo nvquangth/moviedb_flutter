@@ -10,8 +10,10 @@ class FavoriteBloc extends BaseBloc {
   Observable<List<Movie>> get movies => _moviesFetcher.stream;
 
   @override
-  void dispose() {
+  void dispose() async {
+    await _moviesFetcher.drain();
     _moviesFetcher.close();
+    print("favorite dispose");
   }
 
   getMovies() async {

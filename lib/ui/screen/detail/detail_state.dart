@@ -3,6 +3,7 @@ import 'package:moviedb_flutter/data/model/cast.dart';
 import 'package:moviedb_flutter/data/model/cast_response.dart';
 import 'package:moviedb_flutter/data/model/company.dart';
 import 'package:moviedb_flutter/data/model/movie.dart';
+import 'package:moviedb_flutter/ui/base/base_bloc_provider.dart';
 import 'package:moviedb_flutter/ui/screen/detail/detail_bloc.dart';
 import 'package:moviedb_flutter/ui/screen/detail/detail_widget.dart';
 import 'package:toast/toast.dart';
@@ -10,21 +11,28 @@ import 'package:toast/toast.dart';
 class DetailState extends State<Detail> {
   BuildContext scaffoldContext;
   Movie _movie;
-  final DetailBloc bloc = DetailBloc();
+  DetailBloc _bloc;
 
   @override
   void initState() {
     super.initState();
     _movie = widget.movie;
-
-    bloc.getMovie(true, _movie);
-    bloc.checkFavorite();
   }
 
   @override
   void dispose() {
-    bloc.dispose();
+    _bloc.dispose();
     super.dispose();
+  }
+
+  @override
+  void didChangeDependencies() {
+    _bloc = BlocProvider.of<DetailBloc>(context);
+
+    _bloc.getMovie(true, _movie);
+    _bloc.checkFavorite();
+    
+    super.didChangeDependencies();
   }
 
   @override
@@ -40,15 +48,6 @@ class DetailState extends State<Detail> {
     );
   }
 
-  void onSuccess(Movie movie) {
-    setState(() {
-      print(movie);
-      _movie = movie;
-    });
-  }
-
-  void onFail(Exception e) {}
-
   Widget _buildDetail(Movie movie) {
     return ListView(
       physics: BouncingScrollPhysics(),
@@ -57,7 +56,7 @@ class DetailState extends State<Detail> {
         _buildTitle(movie.title),
         _buildOverview(movie.overview),
         StreamBuilder(
-          stream: bloc.movieStream,
+          stream: _bloc.movieStream,
           builder: (context, AsyncSnapshot<Movie> snapshot) {
             if (snapshot.hasData) {
               return _buildCast(snapshot.data.castResponse);
@@ -68,7 +67,7 @@ class DetailState extends State<Detail> {
           },
         ),
         StreamBuilder(
-          stream: bloc.movieStream,
+          stream: _bloc.movieStream,
           builder: (context, AsyncSnapshot<Movie> snapshot) {
             if (snapshot.hasData) {
               return _buildCompany(snapshot.data.companies);
@@ -91,9 +90,9 @@ class DetailState extends State<Detail> {
           right: -10,
           bottom: 10,
           child: RawMaterialButton(
-            onPressed: bloc.handleFavorite,
+            onPressed: _bloc.handleFavorite,
             child: StreamBuilder(
-                stream: bloc.favoriteStream,
+                stream: _bloc.favoriteStream,
                 builder: (context, AsyncSnapshot<bool> snapshot) {
                   if (snapshot.hasData) {
                     return Icon(
