@@ -1,23 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:moviedb_flutter/data/model/movie.dart';
+import 'package:moviedb_flutter/ui/base/base_bloc_provider.dart';
 import 'package:moviedb_flutter/ui/screen/detail/detail_widget.dart';
 import 'package:moviedb_flutter/ui/screen/favorite/favorite_bloc.dart';
 import 'package:moviedb_flutter/ui/screen/favorite/favorite_widget.dart';
+import 'package:moviedb_flutter/ui/screen/detail/detail_bloc.dart';
 
 class FavoriteState extends State<Favorite> {
   List<Movie> _movies = [];
-  final FavoriteBloc bloc = FavoriteBloc();
+  FavoriteBloc _bloc;
 
   @override
-  void initState() {
-    super.initState();
-    bloc.getMovies();
-  }
+  void didChangeDependencies() {
+    _bloc = BlocProvider.of<FavoriteBloc>(context);
+    _bloc.getMovies();
 
-  @override
-  void dispose() {
-    bloc.dispose();
-    super.dispose();
+    super.didChangeDependencies();
   }
 
   @override
@@ -25,7 +23,7 @@ class FavoriteState extends State<Favorite> {
     return Container(
       child: Center(
         child: StreamBuilder(
-            stream: bloc.movies,
+            stream: _bloc.movies,
             builder: (context, AsyncSnapshot<List<Movie>> snapshot) {
               if (snapshot.hasData) {
                 _movies = snapshot.data;
@@ -49,11 +47,10 @@ class FavoriteState extends State<Favorite> {
 
     _gotoDetail() {
       Navigator.of(context).push(MaterialPageRoute(
-          builder: (context) => Detail(
-                movie: movie,
-              )));
-
-//      Navigator.of(context).pushNamed('/detail', arguments: movie);
+          builder: (context) => BlocProvider<DetailBloc>(
+            bloc: DetailBloc(),
+            child: Detail(movie: movie,),
+          )));
     }
 
     _handleFavorite() {}

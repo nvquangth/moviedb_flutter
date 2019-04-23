@@ -10,7 +10,8 @@ class NowPlayingBloc extends BaseBloc {
   Observable<MovieResponse> get movies => _moviesFetcher.stream;
 
   @override
-  void dispose() {
+  void dispose() async {
+    await _moviesFetcher.drain();
     _moviesFetcher.close();
   }
 

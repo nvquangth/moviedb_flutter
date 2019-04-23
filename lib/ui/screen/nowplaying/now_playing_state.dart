@@ -1,23 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:moviedb_flutter/data/model/movie.dart';
 import 'package:moviedb_flutter/data/model/movie_respone.dart';
+import 'package:moviedb_flutter/ui/base/base_bloc_provider.dart';
+import 'package:moviedb_flutter/ui/screen/detail/detail_bloc.dart';
 import 'package:moviedb_flutter/ui/screen/detail/detail_widget.dart';
 import 'package:moviedb_flutter/ui/screen/nowplaying/now_playing_bloc.dart';
 import 'package:moviedb_flutter/ui/screen/nowplaying/now_playing_widget.dart';
 
 class NowPlayingState extends State<NowPlaying> {
-  final bloc = NowPlayingBloc();
+  NowPlayingBloc _bloc;
 
   @override
-  void initState() {
-    super.initState();
-    bloc.fetchMovies(1);
-  }
+  void didChangeDependencies() {
+    _bloc = BlocProvider.of<NowPlayingBloc>(context);
+    _bloc.fetchMovies(1);
 
-  @override
-  void dispose() {
-    bloc.dispose();
-    super.dispose();
+    super.didChangeDependencies();
   }
 
   @override
@@ -25,7 +23,7 @@ class NowPlayingState extends State<NowPlaying> {
     return Container(
       child: Center(
         child: StreamBuilder(
-            stream: bloc.movies,
+            stream: _bloc.movies,
             builder: (context, AsyncSnapshot<MovieResponse> snapshot) {
               if (snapshot.hasData) {
                 return _buildList(snapshot);
@@ -51,11 +49,12 @@ class NowPlayingState extends State<NowPlaying> {
 
     _gotoDetail() {
       Navigator.of(context).push(MaterialPageRoute(
-          builder: (context) => Detail(
-                movie: movie,
+          builder: (context) => BlocProvider<DetailBloc>(
+                bloc: DetailBloc(),
+                child: Detail(
+                  movie: movie,
+                ),
               )));
-
-//      Navigator.of(context).pushNamed('/detail', arguments: movie);
     }
 
     _handleFavorite() {}

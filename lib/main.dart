@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:moviedb_flutter/ui/screen/favorite/favorite_widget.dart';
-import 'package:moviedb_flutter/ui/screen/nowplaying/now_playing_widget.dart';
+import 'package:moviedb_flutter/ui/base/base_bloc_provider.dart';
 import 'package:moviedb_flutter/ui/screen/detail/detail_widget.dart';
+import 'package:moviedb_flutter/ui/screen/favorite/favorite_bloc.dart';
+import 'package:moviedb_flutter/ui/screen/favorite/favorite_widget.dart';
+import 'package:moviedb_flutter/ui/screen/nowplaying/now_playing_bloc.dart';
+import 'package:moviedb_flutter/ui/screen/nowplaying/now_playing_widget.dart';
 
 void main() => runApp(MyApp());
 
@@ -13,7 +16,7 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Demo',
       theme: ThemeData.dark(),
       home: Main(),
-      routes: <String, WidgetBuilder> {
+      routes: <String, WidgetBuilder>{
         '/detail': (BuildContext context) => Detail()
       },
     );
@@ -22,11 +25,19 @@ class MyApp extends StatelessWidget {
 
 class MainState extends State<Main> {
   int _currentTab = 0;
-  final List<Widget> _tabs = [NowPlaying(), Favorite()];
-  final List<Widget> _titleTabs = [
-    Text("Now Playing"),
-    Text("Favorite")
+
+//  final List<Widget> _tabs = [NowPlaying(), Favorite()];
+  final List<Widget> _tabs = [
+    BlocProvider<NowPlayingBloc>(
+      bloc: NowPlayingBloc(),
+      child: NowPlaying(),
+    ),
+    BlocProvider<FavoriteBloc>(
+      bloc: FavoriteBloc(),
+      child: Favorite(),
+    )
   ];
+  final List<Widget> _titleTabs = [Text("Now Playing"), Text("Favorite")];
 
   @override
   Widget build(BuildContext context) {
@@ -41,11 +52,9 @@ class MainState extends State<Main> {
           onTap: onItemSelected,
           items: [
             BottomNavigationBarItem(
-                icon: Icon(Icons.movie),
-                title: Text("Now Playing")),
+                icon: Icon(Icons.movie), title: Text("Now Playing")),
             BottomNavigationBarItem(
-                icon: Icon(Icons.video_library),
-                title: Text('Favorite'))
+                icon: Icon(Icons.video_library), title: Text('Favorite'))
           ]),
     );
   }
