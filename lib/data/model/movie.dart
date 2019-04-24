@@ -15,6 +15,7 @@ class Movie {
   final List<Company> companies;
   final CastResponse castResponse;
   final VideoResponse videoResponse;
+  bool isFavorite;
 
   Movie(
       {this.id,
@@ -27,7 +28,8 @@ class Movie {
       this.genres,
       this.companies,
       this.castResponse,
-      this.videoResponse});
+      this.videoResponse,
+      this.isFavorite});
 
   factory Movie.fromJson(Map<String, dynamic> json) {
     if (json == null) return null;
