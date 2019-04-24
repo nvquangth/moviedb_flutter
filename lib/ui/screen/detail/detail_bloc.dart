@@ -13,13 +13,19 @@ class DetailBloc extends BaseBloc {
 
   StreamSink<Movie> get _movieSink => _movieController.sink;
 
-  StreamController<bool> _favoriteController = StreamController();
+  StreamController<int> _favoriteController = StreamController.broadcast();
 
-  Stream<bool> get favoriteStream => _favoriteController.stream;
+  Stream<int> get favoriteStream => _favoriteController.stream;
 
-  StreamSink<bool> get _favoriteSink => _favoriteController.sink;
+  StreamSink<int> get _favoriteSink => _favoriteController.sink;
 
-  bool _isFavorite;
+  ///
+  ///  1:  true: auto check
+  /// 11:  true: event check
+  ///  2: false: auto check
+  /// 22: false: event check
+  ///
+  int _isFavorite = 2;
   Movie _movie;
 
   @override
@@ -34,19 +40,25 @@ class DetailBloc extends BaseBloc {
     _movieSink.add(m);
   }
 
+  ///
+  /// auto check favorite
+  ///
   checkFavorite() async {
     Movie movie = await _repository.getMovie(false, _movie.id);
-    _isFavorite = movie == null ? false : true;
+    _isFavorite = movie == null ? 2 : 1;
     _favoriteSink.add(_isFavorite);
   }
 
+  ///
+  /// event check favorite
+  ///
   handleFavorite() async {
-    if (_isFavorite) {
+    if (_isFavorite == 1 || _isFavorite == 11) {
       await _repository.deleteMovie(_movie);
-      _isFavorite = false;
-    } else {
+      _isFavorite = 22;
+    } else if (_isFavorite == 2 || _isFavorite == 22) {
       await _repository.insertMovie(_movie);
-      _isFavorite = true;
+      _isFavorite = 11;
     }
     _favoriteSink.add(_isFavorite);
   }

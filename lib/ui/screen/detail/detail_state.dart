@@ -7,31 +7,38 @@ import 'package:moviedb_flutter/ui/base/base_bloc_provider.dart';
 import 'package:moviedb_flutter/ui/screen/detail/detail_bloc.dart';
 import 'package:moviedb_flutter/ui/screen/detail/detail_widget.dart';
 import 'package:toast/toast.dart';
+import 'package:moviedb_flutter/ui/screen/favorite/favorite_bloc.dart';
 
 class DetailState extends State<Detail> {
   BuildContext scaffoldContext;
   Movie _movie;
   DetailBloc _bloc;
+  FavoriteBloc _favoriteBloc;
 
   @override
   void initState() {
     super.initState();
     _movie = widget.movie;
-  }
 
-  @override
-  void dispose() {
-    _bloc.dispose();
-    super.dispose();
+
   }
 
   @override
   void didChangeDependencies() {
     _bloc = BlocProvider.of<DetailBloc>(context);
+    _favoriteBloc = BlocProvider.of<FavoriteBloc>(context);
 
     _bloc.getMovie(true, _movie);
     _bloc.checkFavorite();
-    
+
+    _bloc.favoriteStream.forEach((favorite) {
+      if (favorite == 11) {
+        _toast("Add to Favorites!");
+      } else if (favorite == 22) {
+        _toast("Remove form Favorites!");
+      }
+    });
+
     super.didChangeDependencies();
   }
 
@@ -93,10 +100,13 @@ class DetailState extends State<Detail> {
             onPressed: _bloc.handleFavorite,
             child: StreamBuilder(
                 stream: _bloc.favoriteStream,
-                builder: (context, AsyncSnapshot<bool> snapshot) {
+                builder: (context, AsyncSnapshot<int> snapshot) {
                   if (snapshot.hasData) {
+                    if (snapshot.data == 11 || snapshot.data == 22) {
+                      _favoriteBloc.inFavoriteSubject.add(_movie);
+                    }
                     return Icon(
-                      snapshot.data ? Icons.favorite : Icons.favorite_border,
+                      (snapshot.data == 1 || snapshot.data == 11) ? Icons.favorite : Icons.favorite_border,
                       color: Colors.blue,
                       size: 35.0,
                     );
