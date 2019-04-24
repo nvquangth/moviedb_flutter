@@ -38,6 +38,7 @@ class NowPlayingState extends State<NowPlaying> {
 
   Widget _buildList(AsyncSnapshot<MovieResponse> snapshot) {
     return ListView.builder(
+        physics: BouncingScrollPhysics(),
         itemCount: snapshot.data.movies.length,
         itemBuilder: (context, i) {
           return _buildRow(snapshot.data.movies[i], context);
@@ -92,7 +93,7 @@ class NowPlayingState extends State<NowPlaying> {
               ),
             ),
             IconButton(
-              icon: Icon(Icons.favorite_border),
+              icon: movie.isFavorite ? Icon(Icons.favorite) : Icon(Icons.favorite_border),
               onPressed: _handleFavorite,
             )
           ],

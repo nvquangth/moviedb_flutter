@@ -1,7 +1,7 @@
 import 'package:moviedb_flutter/data/model/movie.dart';
 
 class MovieResponse {
-  final List<Movie> movies;
+  List<Movie> movies;
   final int page;
   final int totalPages;
 
