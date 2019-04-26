@@ -6,27 +6,28 @@ import 'package:moviedb_flutter/data/model/movie.dart';
 import 'package:moviedb_flutter/ui/base/base_bloc_provider.dart';
 import 'package:moviedb_flutter/ui/screen/detail/detail_bloc.dart';
 import 'package:moviedb_flutter/ui/screen/detail/detail_widget.dart';
-import 'package:toast/toast.dart';
 import 'package:moviedb_flutter/ui/screen/favorite/favorite_bloc.dart';
+import 'package:moviedb_flutter/ui/screen/nowplaying/now_playing_bloc.dart';
+import 'package:toast/toast.dart';
 
 class DetailState extends State<Detail> {
   BuildContext scaffoldContext;
   Movie _movie;
   DetailBloc _bloc;
   FavoriteBloc _favoriteBloc;
+  NowPlayingBloc _nowPlayingBloc;
 
   @override
   void initState() {
     super.initState();
     _movie = widget.movie;
-
-
   }
 
   @override
   void didChangeDependencies() {
     _bloc = BlocProvider.of<DetailBloc>(context);
     _favoriteBloc = BlocProvider.of<FavoriteBloc>(context);
+    _nowPlayingBloc = BlocProvider.of<NowPlayingBloc>(context);
 
     _bloc.getMovie(true, _movie);
     _bloc.checkFavorite();
@@ -104,9 +105,12 @@ class DetailState extends State<Detail> {
                   if (snapshot.hasData) {
                     if (snapshot.data == 11 || snapshot.data == 22) {
                       _favoriteBloc.inFavoriteSubject.add(_movie);
+                      _nowPlayingBloc.inFavoriteSubject.add(_movie);
                     }
                     return Icon(
-                      (snapshot.data == 1 || snapshot.data == 11) ? Icons.favorite : Icons.favorite_border,
+                      (snapshot.data == 1 || snapshot.data == 11)
+                          ? Icons.favorite
+                          : Icons.favorite_border,
                       color: Colors.blue,
                       size: 35.0,
                     );

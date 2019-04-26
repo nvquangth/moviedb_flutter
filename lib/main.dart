@@ -5,7 +5,9 @@ import 'package:moviedb_flutter/ui/screen/favorite/favorite_widget.dart';
 import 'package:moviedb_flutter/ui/screen/nowplaying/now_playing_bloc.dart';
 import 'package:moviedb_flutter/ui/screen/nowplaying/now_playing_widget.dart';
 
-void main() => runApp(BlocProvider(child: MyApp(), bloc: FavoriteBloc()));
+void main() => runApp(BlocProvider(
+    child: BlocProvider(child: MyApp(), bloc: NowPlayingBloc()),
+    bloc: FavoriteBloc()));
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
@@ -27,7 +29,7 @@ class MainState extends State<Main> {
   Widget build(BuildContext context) {
     final List<Widget> _tabs = [
       BlocProvider<NowPlayingBloc>(
-        bloc: NowPlayingBloc(),
+        bloc: BlocProvider.of<NowPlayingBloc>(context),
         child: NowPlaying(),
       ),
       BlocProvider<FavoriteBloc>(
