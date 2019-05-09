@@ -9,6 +9,7 @@ import 'package:moviedb_flutter/ui/screen/detail/detail_widget.dart';
 import 'package:moviedb_flutter/ui/screen/favorite/favorite_bloc.dart';
 import 'package:moviedb_flutter/ui/screen/nowplaying/now_playing_bloc.dart';
 import 'package:toast/toast.dart';
+import 'package:moviedb_flutter/ui/screen/search/search_bloc.dart';
 
 class DetailState extends State<Detail> {
   BuildContext scaffoldContext;
@@ -16,6 +17,7 @@ class DetailState extends State<Detail> {
   DetailBloc _bloc;
   FavoriteBloc _favoriteBloc;
   NowPlayingBloc _nowPlayingBloc;
+  SearchBloc _searchBloc;
 
   @override
   void initState() {
@@ -28,6 +30,7 @@ class DetailState extends State<Detail> {
     _bloc = BlocProvider.of<DetailBloc>(context);
     _favoriteBloc = BlocProvider.of<FavoriteBloc>(context);
     _nowPlayingBloc = BlocProvider.of<NowPlayingBloc>(context);
+    _searchBloc = BlocProvider.of<SearchBloc>(context);
 
     _bloc.getMovie(true, _movie);
     _bloc.checkFavorite();
@@ -106,6 +109,7 @@ class DetailState extends State<Detail> {
                     if (snapshot.data == 11 || snapshot.data == 22) {
                       _favoriteBloc.inFavoriteSubject.add(_movie);
                       _nowPlayingBloc.inFavoriteSubject.add(_movie);
+                      _searchBloc.inFavoriteMovie.add(_movie);
                     }
                     return Icon(
                       (snapshot.data == 1 || snapshot.data == 11)
