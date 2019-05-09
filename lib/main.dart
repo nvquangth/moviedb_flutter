@@ -4,9 +4,13 @@ import 'package:moviedb_flutter/ui/screen/favorite/favorite_bloc.dart';
 import 'package:moviedb_flutter/ui/screen/favorite/favorite_widget.dart';
 import 'package:moviedb_flutter/ui/screen/nowplaying/now_playing_bloc.dart';
 import 'package:moviedb_flutter/ui/screen/nowplaying/now_playing_widget.dart';
+import 'package:moviedb_flutter/ui/screen/search/search_bloc.dart';
+import 'package:moviedb_flutter/ui/screen/search/search_widget.dart';
 
 void main() => runApp(BlocProvider(
-    child: BlocProvider(child: MyApp(), bloc: NowPlayingBloc()),
+    child: BlocProvider(
+        child: BlocProvider(child: MyApp(), bloc: SearchBloc()),
+        bloc: NowPlayingBloc()),
     bloc: FavoriteBloc()));
 
 class MyApp extends StatelessWidget {
@@ -60,7 +64,13 @@ class MainState extends State<Main> {
     );
   }
 
-  void _gotoSearch() {}
+  void _gotoSearch() {
+    Navigator.of(context).push(_buildSearchPage());
+  }
+
+  _buildSearchPage() {
+    return MaterialPageRoute(builder: (context) => Search());
+  }
 
   Widget _buildDrawer() {
     return Drawer(

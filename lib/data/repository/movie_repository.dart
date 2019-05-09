@@ -13,6 +13,10 @@ abstract class MovieRepository {
   Future<int> insertMovie(Movie movie);
 
   Future<List<Movie>> getMovies();
+
+  Future<MovieResponse> searchRemoteMovies(String q);
+
+  Future<List<Movie>> searchLocalMovies(String q);
 }
 
 class MovieRepositoryImpl implements MovieRepository {
@@ -45,4 +49,10 @@ class MovieRepositoryImpl implements MovieRepository {
 
   @override
   Future<List<Movie>> getMovies() => local.getMovies();
+
+  @override
+  Future<MovieResponse> searchRemoteMovies(String q) => remote.searchMovies(q);
+
+  @override
+  Future<List<Movie>> searchLocalMovies(String q) => local.searchMovies(q);
 }
