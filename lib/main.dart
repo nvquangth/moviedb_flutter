@@ -6,6 +6,7 @@ import 'package:moviedb_flutter/ui/screen/nowplaying/now_playing_bloc.dart';
 import 'package:moviedb_flutter/ui/screen/nowplaying/now_playing_widget.dart';
 import 'package:moviedb_flutter/ui/screen/search/search_bloc.dart';
 import 'package:moviedb_flutter/ui/screen/search/search_widget.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 void main() => runApp(BlocProvider(
     child: BlocProvider(
@@ -108,6 +109,7 @@ class MainState extends State<Main> {
             title: Text("Help & Feedback"),
             leading: Icon(Icons.mail),
             onTap: () {
+              _openMail();
               Navigator.pop(context);
             },
           )
@@ -134,6 +136,19 @@ class MainState extends State<Main> {
         _currentTab = index;
       } else {}
     });
+  }
+}
+
+_openMail() async {
+  var toMailId = "suport@movie.db.io";
+  var subject = "[Movie Android] Report - Feedback";
+  var body = "Enter content";
+
+  var url = 'mailto:$toMailId?subject=$subject&body=$body';
+  if (await canLaunch(url)) {
+    await launch(url);
+  } else {
+    throw 'Could not launch $url';
   }
 }
 
