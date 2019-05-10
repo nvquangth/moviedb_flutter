@@ -6,6 +6,7 @@ import 'package:moviedb_flutter/ui/screen/nowplaying/now_playing_bloc.dart';
 import 'package:moviedb_flutter/ui/screen/nowplaying/now_playing_widget.dart';
 import 'package:moviedb_flutter/ui/screen/search/search_bloc.dart';
 import 'package:moviedb_flutter/ui/screen/search/search_widget.dart';
+import 'package:moviedb_flutter/ui/screen/settings/setting_widget.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 void main() => runApp(BlocProvider(
@@ -103,6 +104,7 @@ class MainState extends State<Main> {
             leading: Icon(Icons.settings),
             onTap: () {
               Navigator.pop(context);
+              _openSettings(context);
             },
           ),
           ListTile(
@@ -150,6 +152,11 @@ _openMail() async {
   } else {
     throw 'Could not launch $url';
   }
+}
+
+_openSettings(BuildContext context) {
+  Navigator.of(context)
+      .push(MaterialPageRoute(builder: (context) => Setting()));
 }
 
 class Main extends StatefulWidget {
